@@ -1,0 +1,33 @@
+# Slowcord: Render blueprint.
+#
+# Free web services sleep after about 15 minutes without traffic. An external
+# ping to /healthz every 10 minutes keeps the hosted copy awake; the product
+# film is recorded from a local run.
+#
+# Model calls go to Google AI (Gemma), so the service needs no local model
+# runtime.
+
+services:
+  - type: web
+    name: slowcord
+    runtime: node
+    plan: free
+    buildCommand: npm ci && npm run build
+    startCommand: node dist/main.js -c settings.slowcord.yaml
+    healthCheckPath: /healthz
+    envVars:
+      - key: NODE_VERSION
+        value: "24.12.0"
+      - key: DISCORD_BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: SLOW_PROVIDER
+        value: google
+      - key: GOOGLE_AI_API_KEY
+        sync: false
+      - key: GOOGLE_AI_MODEL
+        value: gemma-3-27b-it
+      # Optional: leave unset (or empty) to disable Sentry; it is a clean no-op.
+      - key: SENTRY_DSN
+        sync: false

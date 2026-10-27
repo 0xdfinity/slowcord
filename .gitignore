@@ -43,6 +43,9 @@ jspm_packages
 settings.yaml
 package-lock.json
 
+# Local environment
+.env
+
 # Everything in the data directory
 data/
 

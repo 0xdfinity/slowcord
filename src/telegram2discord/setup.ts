@@ -7,6 +7,7 @@ import { Client } from "discord.js";
 import { MessageMap } from "../MessageMap";
 import { BridgeMap } from "../bridgestuff/BridgeMap";
 import { Settings } from "../settings/Settings";
+import { SlowEngine } from "../slow/types";
 import {
 	chatinfo,
 	threadinfo,
@@ -78,7 +79,8 @@ export function setup(
 	dcBot: Client,
 	messageMap: MessageMap,
 	bridgeMap: BridgeMap,
-	settings: Settings
+	settings: Settings,
+	slow?: SlowEngine
 ) {
 	//@ts-ignore
 	tgBot.ready = Promise.all([
@@ -100,6 +102,13 @@ export function setup(
 					command: "threadinfo",
 					description: "Get info about the thread"
 				},
+				{ command: "slow", description: "Turn slow digest mode on or off" },
+				{ command: "digest", description: "Send a digest of buffered Discord messages" },
+				{ command: "servers", description: "List Discord servers and channels" },
+				{ command: "channels", description: "List channels in a Discord server" },
+				{ command: "draft", description: "Draft a reply to a needs-you item" },
+				{ command: "approve", description: "Post a draft to Discord" },
+				{ command: "cancel", description: "Discard a draft" },
 				...(settings.telegram.enableBridgeManagement
 					? [
 							{
@@ -180,6 +189,7 @@ export function setup(
 			tgBot.command("threadinfo", threadinfo);
 			tgBot.command("connect", require("./bridgeCommands").connectBridge);
 			tgBot.command("remove", require("./bridgeCommands").removeBridge);
+			slow?.registerCommands(tgBot);
 			tgBot.use(channelChatInfo as any);
 			tgBot.use(middlewares.addTediCrossObj);
 			tgBot.use(middlewares.addMessageObj);
@@ -216,5 +226,8 @@ export function setup(
 		})
 		// Start getting updates
 		//@ts-ignore TODO: startPooling is a private method. Maybe use .launch() instead
-		.then(() => tgBot.startPolling());
+		.then(() => tgBot.startPolling())
+		.catch((err: any) => {
+			logger.error("Telegram bot could not start:", err?.description ?? err?.message ?? String(err));
+		});
 }

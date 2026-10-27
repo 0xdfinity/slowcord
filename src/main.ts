@@ -19,6 +19,10 @@ import { setup as telegramSetup, TediTelegraf } from "./telegram2discord/setup";
 // Discord stuff
 import { Client as DiscordClient, GatewayIntentBits, ActivityType } from "discord.js";
 import { setup as discordSetup } from "./discord2telegram/setup";
+import { createSlow } from "./slow";
+import { initSentry } from "./slow/sentry";
+
+initSentry();
 
 if (!semver.gte(process.version, "22.13.0")) {
 	console.log(`TediCross requires at least nodejs 22.13. Your version is ${process.version}`);
@@ -112,9 +116,13 @@ const messageMap = new MessageMap(settings, logger, args.dataDir);
 // Create the bridge map
 const bridgeMap = new BridgeMap(settings.bridges);
 
+// Create the Slowcord engine
+const slow = createSlow({ logger, dcBot, tgBot, bridgeMap, settings, dataDir: args.dataDir });
+
 /*********************
  * Set up the bridge *
  *********************/
 
-discordSetup(logger, dcBot, tgBot, messageMap, bridgeMap, settings, args.dataDir);
-telegramSetup(logger, tgBot as TediTelegraf, dcBot, messageMap, bridgeMap, settings);
+discordSetup(logger, dcBot, tgBot, messageMap, bridgeMap, settings, args.dataDir, slow);
+telegramSetup(logger, tgBot as TediTelegraf, dcBot, messageMap, bridgeMap, settings, slow);
+slow.start();

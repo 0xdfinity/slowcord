@@ -1,0 +1,74 @@
+telegram:
+  useFirstNameInsteadOfUsername: false
+  colonAfterSenderName: false
+  skipOldMessages: true
+  sendEmojiWithStickers: true
+  useCustomEmojiFilter: false
+  replaceAtWithHash: false
+  replaceExcessiveSpaces: false
+  removeNewlineSpaces: false
+  suppressFileTooBigMessages: false
+  suppressThisIsPrivateBotMessage: false
+  enableBridgeManagement: false
+  emojiMap: {}
+  token: env
+discord:
+  skipOldMessages: true
+  useNickname: false
+  replyLength: 100
+  maxReplyLines: 2
+  suppressThisIsPrivateBotMessage: false
+  enableCustomStatus: false
+  customStatusMessage: TediCross
+  useEmbeds: auto
+  token: env
+debug: false
+messageTimeoutAmount: 24
+messageTimeoutUnit: hours
+persistentMessageMap: false
+bridges:
+  - name: Main bridge
+    direction: both
+    telegram:
+      chatId: -1000000000000
+      relayJoinMessages: true
+      relayLeaveMessages: true
+      sendUsernames: true
+      crossDeleteOnDiscord: true
+      allowedUserIds: []
+      blockedUserIds: []
+      ignoreBots: true
+      groupMessages: false
+      media:
+        enabled: true
+        photo:
+          enabled: true
+          replacementText: '[Photo omitted]'
+        video:
+          enabled: true
+          replacementText: '[Video omitted]'
+        audio:
+          enabled: true
+          replacementText: '[Audio omitted]'
+        file:
+          enabled: true
+          replacementText: '[File omitted]'
+        sticker:
+          enabled: true
+          replacementText: '[Sticker omitted]'
+      messageStyle: text
+    discord:
+      channelId: '000000000000000000'
+      relayJoinMessages: true
+      relayLeaveMessages: true
+      sendUsernames: true
+      crossDeleteOnTelegram: true
+      allowedUserIds: []
+      blockedUserIds: []
+      ignoreBots: true
+      ignoreWebhooks: true
+      groupMessages: false
+      disableWebPreviewOnTelegram: false
+      useEmbeds: auto
+    topicBridges: []
+    topicBridgesAutoCreate: false

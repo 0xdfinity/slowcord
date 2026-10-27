@@ -33,6 +33,7 @@ import {
 	TextChannel
 } from "discord.js";
 import { Settings } from "../settings/Settings";
+import { SlowEngine } from "../slow/types";
 import { InputMediaVideo, InputMediaAudio, InputMediaDocument, InputMediaPhoto } from "telegraf/types";
 
 /***********
@@ -181,7 +182,8 @@ export function setup(
 	messageMap: MessageMap,
 	bridgeMap: BridgeMap,
 	settings: Settings,
-	datadirPath: string
+	datadirPath: string,
+	slow?: SlowEngine
 ) {
 	settings.onBridgeMapUpdate(updatedBridgeMap => {
 		bridgeMap = updatedBridgeMap;
@@ -296,6 +298,11 @@ export function setup(
 
 				// This is now the latest message for this bridge
 				latestDiscordMessageIds.setLatest(message.id, bridge);
+
+				// Slowcord buffers the message and suppresses the instant relay when slow mode is on
+				if (slow && (await slow.onDiscordMessage(message, bridge))) {
+					continue;
+				}
 
 				// Check if the message is a reply and get the id of that message on Telegram
 				let replyId = "0";
